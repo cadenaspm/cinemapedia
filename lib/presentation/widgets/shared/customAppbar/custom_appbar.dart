@@ -27,7 +27,7 @@ class CustomAppbar extends SliverPersistentHeaderDelegate {
     final isCollapsed = shrinkOffset > (maxExtents - minExtents - 10) ;
 
     return Container(
-      color: Colors.red[100],
+      color: Theme.of(context).colorScheme.primaryContainer,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       alignment: Alignment.center,
       child: SafeArea(
@@ -35,7 +35,7 @@ class CustomAppbar extends SliverPersistentHeaderDelegate {
         child: Column(
           children: [
             if(!isCollapsed)
-              FadeIn(child: Text('Esta es una info de prueba')),
+              FadeIn(child: Text('La mejor información de cine', style: titleStyle,)),
             Row(
               children: [
                 Icon(Icons.movie_creation_outlined, color: color.primary),

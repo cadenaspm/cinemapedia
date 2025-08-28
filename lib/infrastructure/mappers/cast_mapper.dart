@@ -15,3 +15,4 @@ class CastMapper {
     character: casting.character
   );
 }
+

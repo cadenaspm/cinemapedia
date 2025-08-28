@@ -1,6 +1,4 @@
 
-
-
 class Cast {
 
   final int id;

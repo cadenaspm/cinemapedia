@@ -36,6 +36,11 @@ class MovieRepositoryImpl extends MoviesRepository {
   Future<Movie> getMoveById(String id) {
     return datasource.getMoveById(id);
   }
+  
+  @override
+  Future<List<Movie>> searchMovies(String query) {
+    return datasource.searchMovies(query);
+  }
 
 
 }

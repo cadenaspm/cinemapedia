@@ -1,6 +1,11 @@
 
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/presentation/delegates/searchs_movie_delegate.dart';
+import 'package:cinemapedia/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomAppbar extends SliverPersistentHeaderDelegate {
 
@@ -26,31 +31,54 @@ class CustomAppbar extends SliverPersistentHeaderDelegate {
 
     final isCollapsed = shrinkOffset > (maxExtents - minExtents - 10) ;
 
-    return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      alignment: Alignment.center,
-      child: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            if(!isCollapsed)
-              FadeIn(child: Text('La mejor información de cine', style: titleStyle,)),
-            Row(
+    return Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? child) { 
+        return Container(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          alignment: Alignment.center,
+          child: SafeArea(
+            bottom: false,
+            child: Column(
               children: [
-                Icon(Icons.movie_creation_outlined, color: color.primary),
-                const SizedBox(width: 5),
-                Text('Cinemapedia', style: titleStyle),
-                const Spacer(),
-                IconButton(
-                  onPressed: null,
-                  icon: Icon(Icons.search, color: color.primary),
+                if(!isCollapsed)
+                  FadeIn(child: Text('La mejor información de cine', style: titleStyle,)),
+                Row(
+                  children: [
+                    Icon(Icons.movie_creation_outlined, color: color.primary),
+                    const SizedBox(width: 5),
+                    Text('Cinemapedia', style: titleStyle),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () async {
+
+                        final searchedMovies = ref.read( searchedMoviesProvider );
+                        final searchQuery = ref.read(searchQueryProvider);
+
+                        final movie = await showSearch<Movie?>(
+                          query: searchQuery,
+                          context: context, 
+                          delegate: SearchsMovieDelegate(
+                            initialMovies: searchedMovies,
+                            searchMovies: ref.read(searchedMoviesProvider.notifier).searchMoviesByQuery
+                          ),
+                        );
+
+                        if(!context.mounted) return;
+
+                        if(movie == null) return;
+
+                        context.push('/movie/${movie.id}');
+                      },
+                      icon: Icon(Icons.search, color: color.primary),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
